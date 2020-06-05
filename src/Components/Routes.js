@@ -3,16 +3,30 @@ import { Switch, Route } from 'react-router-dom';
 
 import SignUp from './SignUp.js';
 import SignIn from './SignIn.js';
+import Dashboard from './dashboard.js';
+import {useCookies} from 'react-cookie';
+import CreateDocument from './CreateDocument.js';
+export default function Routes() {
 
-export default class Routes extends React.Component {
+const [cookies, setCookies] = useCookies(["isAuth"]);
 
-    render () {
-        return (<Switch>
+console.log(cookies.isAuth);
+        return (
+            cookies.isAuth ? (
+            <Switch>
+                <Route path="/dashboard" exact component={Dashboard} />
+                <Route path="/documents/create" exact component={CreateDocument} />
+                <Route component={Dashboard} />
+            </Switch>):
+            (
+        <Switch>
             <Route path="/" exact component={SignIn} />
             <Route path="/register" exact component={SignUp} />
             <Route component={SignIn} />
-        </Switch>);
-    }
+        </Switch>
+            )
+        );
+    
 }
 
 

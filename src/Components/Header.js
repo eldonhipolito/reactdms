@@ -3,16 +3,15 @@ import CAppBar from "./CAppBar";
 
 
 
-class Header extends React.Component {
+import {useCookies} from 'react-cookie';
 
-    render() {
-     
-        
-        return <CAppBar />;
+
+export default function Header() {
+
+    const [cookies, setCookies] = useCookies(["Authorization"]);
+           
+        return <CAppBar isAuth={cookies.isAuth}/>;
 
                
-    }
+    
 }
-
-
-export default Header;

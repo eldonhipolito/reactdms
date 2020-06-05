@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,8 +12,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import axios from 'axios';
+import {URI} from './config/server.js';
 
-
+import {useCookies} from 'react-cookie';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -35,8 +37,31 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
+
+
 export default function SignIn() {
+
+  const [cookies, setCookies] = useCookies(["Authorization, UserCookie, isAuth"]);
   const classes = useStyles();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const handleLogin = (event) => {
+    event.preventDefault();
+
+    
+    
+    axios.post(URI + "/login",  {username :username, password: password } )
+      .then(res => {
+        setCookies("Authorization", res.headers.authorization, {path : '/'});
+        setCookies("UserCookie", username, {path : '/'});
+        setCookies("isAuth", true, {path : '/'});
+        window.location.href = "/home";
+      });
+  };
+
+
 
   return (
     <Container component="main" maxWidth="xs">
@@ -48,7 +73,7 @@ export default function SignIn() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} onSubmit={handleLogin} noValidate>
           <TextField
             variant="outlined"
             margin="normal"
@@ -59,6 +84,7 @@ export default function SignIn() {
             name="username"
             autoComplete="username"
             autoFocus
+            onChange = {(e) => setUsername(e.target.value)}
           />
           <TextField
             variant="outlined"
@@ -70,6 +96,7 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+            onChange = {(e) => setPassword(e.target.value)}
           />
           <Button
             type="submit"

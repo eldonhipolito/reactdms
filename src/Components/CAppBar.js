@@ -5,7 +5,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import HomeIcon from '@material-ui/icons/Home';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,21 +19,31 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CAppBar() {
+export default function CAppBar(props) {
+  const isAuth = props.isAuth;
   const classes = useStyles();
+
+  const elem = isAuth ?
+  <div>
+    <Button color="inherit" href="/documents/create">Create Document</Button>
+  <Button color="inherit" href="/logout"> Sign Out </Button>
+  </div> :
+  (<div> <Button color="inherit" href="/">Login</Button>
+
+  <Button color="inherit" href="/register">Sign Up</Button>
+  </div>);
 
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-            <MenuIcon />
+            <HomeIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
             Contract Management
           </Typography>
-          <Button color="inherit" href="/">Login</Button>
-          <Button color="inherit" href="/register">Sign Up</Button>
+          {elem}
         </Toolbar>
       </AppBar>
     </div>
