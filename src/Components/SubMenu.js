@@ -20,8 +20,6 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '5px 7px',
     padding: '10px',
     boxShadow: '1px 1px',
-    marginLeft: '10px',
-    marginTop: '50px'
   },
 }));
 
@@ -29,7 +27,7 @@ function ListItemLink(props) {
   return <ListItem button component="a" {...props} />;
 }
 
-export default function SimpleList() {
+export default function SubMenu(props) {
   const classes = useStyles();
 
   return (
@@ -37,19 +35,19 @@ export default function SimpleList() {
         <LibraryBooksIcon fontSize="large"/>
       <List component="nav" aria-label="documents">
       <Divider />
-        <ListItem button>
+        <ListItem button onClick={() => {props.changeCallback('owner')}}>
           <ListItemIcon>
             <LockIcon /> 
           </ListItemIcon>
           <ListItemText primary="My Documents" />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={() => {props.changeCallback('signer')}}>
           <ListItemIcon>
             <CreateIcon />
           </ListItemIcon>
           <ListItemText primary="Sign Documents" />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={() => {props.changeCallback('viewer')}}>
           <ListItemIcon>
             <FolderSharedIcon />
           </ListItemIcon>
