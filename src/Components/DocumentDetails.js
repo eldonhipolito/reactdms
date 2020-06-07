@@ -15,7 +15,10 @@ import IconButton from '@material-ui/core/IconButton';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-
+import FindInPageIcon from '@material-ui/icons/FindInPage';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import Grid from '@material-ui/core/Grid';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -37,6 +40,10 @@ const useStyles = makeStyles((theme) => ({
     }
   }));
 
+  function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+  }
+
 
 export default function DocumentDetails(props){
 
@@ -45,6 +52,9 @@ export default function DocumentDetails(props){
     const [data, setData] = useState({
         loading : true,
         document : null,
+        verificationDone: false,
+        verificationResult: "",
+        fileToValidate : null,
     });
 
     const [cookies] = useCookies(["Authorization"]);
@@ -59,13 +69,43 @@ export default function DocumentDetails(props){
     }, []);
 
     const handleChange = (event) => {
+        if(!event.target.value) return;
+     
+        const formFile = new FormData();
+        formFile.append("file", event.target.files[0]);
+        document.getElementById(event.target.id).value = null;
+        axios.post(URI + "/documents/" + data.document.id + "/verify", formFile, 
+        {headers : {Authorization : cookies.Authorization, "Content-type": 'multipart/form-data'}})
+    .then(res => 
+        {
+            let status;
+            if(res.data.success) {
+                status = "success";
+            } else {
+                status = "warning";
+            }
+            setData({...data, verificationDone : true, verificationResult : status});
 
+            
+        }
+        );
     };
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setData({...data, verificationDone : false});
+      };
 
     const title = !data.loading && data.document.title;
     const description = !data.loading && data.document.description;
     const hash = !data.loading && data.document.hash;
     const owner = !data.loading && data.document.owner;
+
+    const alertText = data.verificationResult === "success" ? "Document matches!" : "Document doesn't match";
+    const alertType = (data.verificationResult === "success" ? "success" : "warning" );
 
     return (
         <div className={classes.root}>
@@ -77,16 +117,29 @@ export default function DocumentDetails(props){
             <h3>{hash}</h3>
             <h3>{owner}</h3>
             <Divider />
-
-            <input className={classes.hidden} id="fileName" type="file" name="fileName"/>
-          <label htmlFor="fileName">
-              <TextField disabled value={data.fileName || ""} label="Upload document"/>
-        <IconButton color="primary" aria-label="upload picture" component="span">
-          <CloudUploadIcon />
-        </IconButton>
-      </label>
+            <Grid container>
+                <Grid item xs={12}>
+                    
+            <FindInPageIcon fontSize="large" />
+            </Grid>
+            <Grid item xs={12}>
+                <input className={classes.hidden} id="fileName" type="file" name="fileName" onChange={handleChange}/>
+                <label htmlFor="fileName">
+                    <TextField disabled value={data.fileName || ""} label="Verify document"/>
+                <IconButton color="primary" aria-label="upload picture" component="span">
+                <CloudUploadIcon  fontSize="large"/>
+           
+                </IconButton>
+                 </label>
+            </Grid>
+      </Grid>
             </Paper>
-
+            <Snackbar open={data.verificationDone} autoHideDuration={6000} onClose={handleClose}>
+                <Alert onClose={handleClose} severity={alertType}>
+                {alertText}
+                </Alert>
+            </Snackbar>
+            
         </div>
 
     );
