@@ -34,7 +34,7 @@ export default function SimpleTable(props) {
             <TableRow key={row.id}>
               <TableCell align="center">{row.title}</TableCell>
               <TableCell align="center">{row.hash}</TableCell>
-              <TableCell align="center"><Link href={"/documents/" + row.id}> View </Link> </TableCell>
+              <TableCell align="center"><Link href={"/documents/" + row.id + "/details"}> View </Link> </TableCell>
             </TableRow>
           ))}
         </TableBody>

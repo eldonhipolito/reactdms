@@ -6,6 +6,7 @@ import SignIn from './SignIn.js';
 import Dashboard from './dashboard.js';
 import {useCookies} from 'react-cookie';
 import CreateDocument from './CreateDocument.js';
+import DocumentDetails from './DocumentDetails.js';
 export default function Routes() {
 
 const [cookies, setCookies] = useCookies(["isAuth"]);
@@ -16,6 +17,7 @@ console.log(cookies.isAuth);
             <Switch>
                 <Route path="/dashboard" exact component={Dashboard} />
                 <Route path="/documents/create" exact component={CreateDocument} />
+                <Route path="/documents/:id/details" exact component={DocumentDetails} />
                 <Route component={Dashboard} />
             </Switch>):
             (
